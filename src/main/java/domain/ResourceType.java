@@ -2,11 +2,11 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:15:19
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-07 04:15:41
+ * @Last Modified time: 2021-04-12 04:08:06
  */
 package domain;
 
-public enum ResourceType {
+public enum  ResourceType {
     UNKNOWN(0),
     BUILDMAT1(1),
     BUILDMAT2(2),

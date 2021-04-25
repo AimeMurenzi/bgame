@@ -2,11 +2,14 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:37:36
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-08 04:18:06
+ * @Last Modified time: 2021-04-12 04:12:13
  */
-package domain;
+package domain.buildings;
 
 import java.util.Map;
+
+import domain.RandomIDGenerator;
+import domain.ResourceType;
 
 public abstract class Building implements IUpgradeable {
     private long id;
@@ -16,13 +19,16 @@ public abstract class Building implements IUpgradeable {
 
     private Map</*level */Integer, /*category*/Map</*categoryType*/ResourceType, Map</*requiredBuildingType*/ResourceType, /*requiredBuildingLevel*/Integer>>> upgradeBuildingRequirementsMap;
     
+    private void generateID(){
+        this.id=RandomIDGenerator.generateID();
+    }
     public Building(long parentId){
         this.parentId=parentId;
-        this.id=IDGenerator.increment(); 
+        generateID();
     }
     public Building(ICapital parentCapital){
         this.parentId=parentCapital.getId();
-        this.id=IDGenerator.increment(); 
+        generateID();
     }
     public Building(long parentId,long id){
         this.parentId=parentId;

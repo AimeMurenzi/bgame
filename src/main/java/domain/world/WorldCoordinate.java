@@ -2,23 +2,14 @@
  * @Author: Aimé
  * @Date:   2021-04-11 21:26:01
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-11 21:54:33
+ * @Last Modified time: 2021-04-13 12:40:27
  */
-package domain;
+package domain.world;
 
 import java.io.Serializable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-enum CoordinateType {
-    LAND("LAND"), WATER("WATER"), FOREST("FOREST"), UNKNOWN("UNKNOWN");
-
-    public String value;
-
-    private CoordinateType(String value) {
-        this.value = value.toUpperCase();
-    }
-}
+import domain.IPlayer;
+import domain.buildings.Capital;
 
 public class WorldCoordinate implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,6 +18,7 @@ public class WorldCoordinate implements Serializable {
     private CoordinateType coordinateType;
     // @JsonIgnore
     private IPlayer player;
+    private Capital capital;
 
     public int getX() {
         return x;
@@ -44,11 +36,17 @@ public class WorldCoordinate implements Serializable {
         this.y = y;
     }
 
-    public WorldCoordinate(int x, int y, CoordinateType coordinateType) {
-        this.x = x;
-        this.y = y;
-        setCoordinateType(coordinateType);
-    }
+    private WorldCoordinate(){}
+    // public WorldCoordinate(int x, int y) {
+    //     this.x = x;
+    //     this.y = y;
+    //     setCoordinateType(CoordinateType.UNKNOWN);
+    // }
+    // public WorldCoordinate(int x, int y, CoordinateType coordinateType) {
+    //     this.x = x;
+    //     this.y = y;
+    //     setCoordinateType(coordinateType);
+    // }
 
     public CoordinateType getCoordinateType() {
         return coordinateType;
@@ -106,8 +104,47 @@ public class WorldCoordinate implements Serializable {
     @Override
     public String toString() {
         return String.format("Coordinate: %d:%d:%s",x,y,coordinateType);
+    } 
+
+    public Capital getCapital() {
+        return capital;
     }
 
-    public WorldCoordinate() {
+    public void setCapital(Capital capital) {
+        this.capital = capital;
     }
+
+    public boolean isFree() {
+        return getCapital()==null;
+    }
+public static class Builder{
+    private int x;
+    private int y;
+    private CoordinateType coordinateType; 
+    private Capital capital;
+    public Builder x(int x){
+        this.x=x;
+        return this;
+    }
+    public Builder y(int y){
+        this.y=y;
+        return this;
+    }
+    public Builder coordinateType(CoordinateType coordinateType){
+        this.coordinateType=coordinateType;
+        return this;
+    }
+    public Builder capital(Capital capital){
+        this.capital=capital;
+        return this;
+    }
+    public WorldCoordinate build(){
+        WorldCoordinate worldCoordinate=new WorldCoordinate();
+        worldCoordinate.x=this.x;
+        worldCoordinate.y=this.y;
+        worldCoordinate.coordinateType=coordinateType==null?CoordinateType.UNKNOWN:this.coordinateType;
+        worldCoordinate.capital=this.capital;
+        return worldCoordinate;
+    } 
+}
 }

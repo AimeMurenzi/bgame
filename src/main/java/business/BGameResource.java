@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:13:24
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-08 07:30:14
+ * @Last Modified time: 2021-04-12 04:03:56
  */
 package business;
 
@@ -13,18 +13,28 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import domain.BuildMaterialProducer;
-import domain.ICapital;
 import domain.ResourceType;
-import domain.Storage;
+import domain.buildings.BuildMaterialProducer;
+import domain.buildings.ICapital;
+import domain.buildings.Storage;
 
 @Stateless
-@Path("")
+@Path("b")
 public class BGameResource {
     @Inject 
     private ICapital capital;
+
+    @GET
+    @Path("login6")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String login(@Context HttpHeaders headers) {
+        System.out.println(headers.getRequestHeaders().toString());
+        return headers.getRequestHeaders().toString();
+    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

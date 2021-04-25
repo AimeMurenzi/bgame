@@ -6,8 +6,8 @@
     <version>0.0.1</version>
     <name>browser game</name>
     <description>
-   Simple browser game
-  </description>
+        Simple browser game
+    </description>
     <packaging>war</packaging>
     <properties>
         <java.version>11</java.version>
@@ -17,6 +17,26 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/de.rtner/PBKDF2 -->
+        <dependency>
+            <groupId>de.rtner</groupId> 
+            <artifactId>PBKDF2</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.auth0/java-jwt -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.15.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.test-framework/jersey-test-framework-core -->
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>3.0.1</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -52,7 +72,8 @@
     </dependencies>
 
     <build>
-        <plugins> 
+        <finalName>bgame</finalName>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

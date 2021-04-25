@@ -2,12 +2,15 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:38:53
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-08 06:03:42
+ * @Last Modified time: 2021-04-12 04:11:51
  */
-package domain;
+package domain.buildings;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import domain.BGameSettings;
+import domain.ResourceType;
 
 public class Storage  extends Building{ 
     private final Map<Integer, Integer> storageLevelMap=new HashMap<>(){ 

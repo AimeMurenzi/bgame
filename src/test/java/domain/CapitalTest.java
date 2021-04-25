@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:44:34
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-08 07:22:09
+ * @Last Modified time: 2021-04-12 04:05:43
  */
 package domain;
 
@@ -11,11 +11,16 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map; 
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import domain.buildings.BuildMaterialProducer;
+import domain.buildings.Building;
+import domain.buildings.Capital;
+import domain.buildings.IUpgradeable;
 
 public class CapitalTest {
     private static Capital capital;

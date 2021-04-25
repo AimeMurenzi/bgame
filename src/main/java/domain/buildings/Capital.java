@@ -2,9 +2,9 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:10:23
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-08 07:07:16
+ * @Last Modified time: 2021-04-12 04:12:03
  */
-package domain;
+package domain.buildings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,9 @@ import java.util.Map;
 
 import javax.ejb.Singleton;
 import javax.ws.rs.ext.Provider;
+
+import domain.BGameSettings;
+import domain.ResourceType;
 
 @Provider
 @Singleton
@@ -23,6 +26,7 @@ public class Capital extends Building implements ICapital {
 
     private final Map<ResourceType, Integer> storedResources = new HashMap<>();
     private final Map<ResourceType, List<Building>> capitalBuildings = new HashMap<>();
+    private String capitalName;
 
     private void initCapital() {
         storedResources.put(ResourceType.BUILDMAT1, 2000);
@@ -35,12 +39,13 @@ public class Capital extends Building implements ICapital {
     // keeping recalculated capital storage size(to save on processing power and
     // reducing call delay).
     public Capital() {
-        super(IDGenerator.increment(), IDGenerator.increment());
+        super(0);
         initCapital();
     }
 
-    public Capital(long parentId) {
-        super(parentId);
+    public Capital(long parentId,String name) {
+        super(parentId); 
+        this.capitalName=name;
         initCapital();
     }
 
@@ -170,7 +175,15 @@ public class Capital extends Building implements ICapital {
         return allMissingResources;
     }
 
-    public Map<ResourceType, Integer> getStoredResources() {
+   public String getCapitalName() {
+    return capitalName;
+}
+
+public void setCapitalName(String capitalName) {
+    this.capitalName = capitalName;
+}
+
+ public Map<ResourceType, Integer> getStoredResources() {
         return storedResources;
     }
 

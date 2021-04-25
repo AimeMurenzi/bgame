@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-11 03:53:50
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-11 21:52:55
+ * @Last Modified time: 2021-04-13 12:33:52
  */
 package domain;
 
@@ -16,6 +16,9 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import domain.buildings.Capital;
+import domain.world.WorldCoordinate;
+
 // import org.springframework.stereotype.Service;
 
 @Provider
@@ -24,7 +27,10 @@ public class Player implements IPlayer, Serializable {
     @JsonIgnore
     private int maxLandClaims = 5;
     // @JsonIgnore
-    private List<WorldCoordinate> claimedLands = new ArrayList<>();
+    private List<WorldCoordinate> claimedLands = new ArrayList<>(); 
+    private List<Capital> capitals = new ArrayList<>(); 
+
+    
     @NotEmpty
     @NotNull
     private String name;
@@ -37,7 +43,7 @@ public class Player implements IPlayer, Serializable {
             if (worldCoordinate.equals(land)) {
                 return true;
             }
-        }
+        } 
         return false;
     }
     @Override

@@ -2,11 +2,13 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:12:26
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-07 22:01:24
+ * @Last Modified time: 2021-04-12 04:10:05
  */
-package domain; 
+package domain.buildings; 
 
 import java.util.Map;
+
+import domain.ResourceType;
 
 public interface ICapital {
     Map<String,Object> getInfo(); 

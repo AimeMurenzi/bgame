@@ -2,9 +2,12 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:17:30
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-07 22:12:48
+ * @Last Modified time: 2021-04-12 04:12:08
  */
-package domain;
+package domain.buildings;
+
+import domain.BGameSettings;
+import domain.ResourceType;
 
 public class BuildMaterialProducer extends Building{
     private long lastUpdate;

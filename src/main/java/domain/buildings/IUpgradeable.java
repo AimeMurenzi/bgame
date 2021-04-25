@@ -2,11 +2,13 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:16:20
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-07 04:16:39
+ * @Last Modified time: 2021-04-12 04:10:12
  */
-package domain;
+package domain.buildings;
 
 import java.util.Map;
+
+import domain.ResourceType;
 
 public interface IUpgradeable {
 

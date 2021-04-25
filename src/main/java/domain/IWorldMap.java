@@ -2,11 +2,14 @@
  * @Author: Aimé
  * @Date:   2021-04-11 21:42:48
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-11 21:44:42
+ * @Last Modified time: 2021-04-13 12:07:18
  */
 package domain;
 
 import java.util.List;
+
+import domain.players.Player2;
+import domain.world.WorldCoordinate;
 
 public interface IWorldMap {
 	List<WorldCoordinate> getCoordinates();
@@ -19,7 +22,14 @@ public interface IWorldMap {
 	 * @return
 	 */
 	WorldCoordinate get(final WorldCoordinate land);
-
+	/**
+	 * 
+	 * @param player
+	 * @param land
+	 * @return
+	 */
+	WorldCoordinate claimLand(final Player2 player,final WorldCoordinate land);
+//TODO: remove, replaced by claimland
 	boolean setOwner(final IPlayer player,  final WorldCoordinate coordinate);
 
 	/**
