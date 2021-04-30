@@ -1,61 +1,41 @@
+/**
+ * @Author: Aimé
+ * @Date:   2021-04-16 05:43:21
+ * @Last Modified by:   Aimé
+ * @Last Modified time: 2021-04-30 08:51:04
+ */
 package domain.players;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import domain.IWorldMap;
 import domain.Util;
-import domain.buildings.Capital;
-import domain.world.WorldCoordinate;
 
-public class Player2 implements Serializable {
+public class Player implements Serializable { 
     private static final long serialVersionUID = 1L;
     @JsonIgnore
     private int maxLandClaims = 5;
-    private final List<Capital> capitals = new ArrayList<>();
 
     private long id;
-    @NotEmpty
-    @NotNull
-    private String name; 
-    private Player2() {
-    }   
+    @NotBlank 
+    private String name;
 
-    private Player2(long id, @NotEmpty @NotNull String name) {
+    private Player() {}
+
+    private Player(long id, @NotBlank String name) {
         this.id = id;
         setName(name);
     }
-
-
 
     public int getMaxLandClaims() {
         return maxLandClaims;
     }
 
-    public List<Capital> getCapitals() {
-        return new ArrayList<>(capitals);
-    }
-
-    public void addCapital(Capital capital) {
-        capitals.add(capital);
-    }
-
     public void setMaxLandClaims(int maxLandClaims) {
         this.maxLandClaims = maxLandClaims;
-    }
-
-    public boolean claimLand(WorldCoordinate coordinate, IWorldMap worldMap) {
-        // if (claimedLands.size() < getMaxLandClaims()) {
-        // if (worldMap.setOwner(this, coordinate))
-        // return claimedLands.add(worldMap.get(coordinate));
-        // }
-        return false;
     }
 
     public long getId() {
@@ -70,20 +50,12 @@ public class Player2 implements Serializable {
         return name;
     }
 
-    public final void setName(String name) { 
-        if (name!=null && !name.isBlank()) {
-            this.name=name.trim().toLowerCase();        
+    public final void setName(String name) {
+        if (name != null && !name.isBlank()) {
+            this.name = name.trim().toLowerCase();
             return;
         }
-       Util.throwBadRequest("name is blank");
-    }
-
-   
-
-    public boolean abandonLand(WorldCoordinate coordinate, IWorldMap worldMap) {
-        // if (worldMap.removeOwner(this, coordinate))
-        // return claimedLands.remove(coordinate);
-        return false;
+        Util.throwBadRequest("name is blank");
     }
 
     @Override
@@ -102,7 +74,7 @@ public class Player2 implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Player2 other = (Player2) obj;
+        Player other = (Player) obj;
         if (name == null) {
             if (other.name != null)
                 return false;
@@ -113,8 +85,7 @@ public class Player2 implements Serializable {
 
     public static class Builder {
         private long id;
-        @NotEmpty
-        @NotNull
+        @NotBlank
         private String name;
 
         public Builder id(long id) {
@@ -126,9 +97,10 @@ public class Player2 implements Serializable {
             this.name = name;
             return this;
         }
-        public Player2 build(){
 
-            return new Player2(id, name);
+        public Player build() {
+
+            return new Player(id, name);
         }
     }
 

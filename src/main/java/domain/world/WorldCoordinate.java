@@ -2,22 +2,19 @@
  * @Author: Aimé
  * @Date:   2021-04-11 21:26:01
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-13 12:40:27
+ * @Last Modified time: 2021-04-30 08:52:00
  */
 package domain.world;
 
 import java.io.Serializable;
 
-import domain.IPlayer;
 import domain.buildings.Capital;
 
-public class WorldCoordinate implements Serializable {
+public class WorldCoordinate implements Serializable { 
     private static final long serialVersionUID = 1L;
     private int x;
     private int y;
-    private CoordinateType coordinateType;
-    // @JsonIgnore
-    private IPlayer player;
+    private CoordinateType coordinateType; 
     private Capital capital;
 
     public int getX() {
@@ -36,18 +33,7 @@ public class WorldCoordinate implements Serializable {
         this.y = y;
     }
 
-    private WorldCoordinate(){}
-    // public WorldCoordinate(int x, int y) {
-    //     this.x = x;
-    //     this.y = y;
-    //     setCoordinateType(CoordinateType.UNKNOWN);
-    // }
-    // public WorldCoordinate(int x, int y, CoordinateType coordinateType) {
-    //     this.x = x;
-    //     this.y = y;
-    //     setCoordinateType(coordinateType);
-    // }
-
+    private WorldCoordinate(){} 
     public CoordinateType getCoordinateType() {
         return coordinateType;
     }
@@ -93,14 +79,7 @@ public class WorldCoordinate implements Serializable {
     public void setCoordinateType(CoordinateType coordinateType) {
         this.coordinateType = coordinateType;
     }
-
-    public IPlayer getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(IPlayer player) {
-        this.player = player;
-    }
+ 
     @Override
     public String toString() {
         return String.format("Coordinate: %d:%d:%s",x,y,coordinateType);
@@ -114,6 +93,10 @@ public class WorldCoordinate implements Serializable {
         this.capital = capital;
     }
 
+    /**
+     * when capital is null then the land is free
+     * @return true if capital is null 
+     */
     public boolean isFree() {
         return getCapital()==null;
     }

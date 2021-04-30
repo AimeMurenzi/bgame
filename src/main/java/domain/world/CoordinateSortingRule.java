@@ -2,17 +2,15 @@
  * @Author: Aimé
  * @Date:   2021-04-12 12:07:22
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-13 12:06:47
+ * @Last Modified time: 2021-04-30 08:51:29
  */
-package domain;
+package domain.world;
 
 import java.util.Comparator;
-
-import domain.world.WorldCoordinate;
 /**
  * compares both x and y world coordinates on X first then Y
  */
-public class ComperatorCoordinates implements Comparator<WorldCoordinate> {
+public class CoordinateSortingRule implements Comparator<WorldCoordinate> { 
 
     @Override
     public int compare(WorldCoordinate worldCoordinateOriginal, WorldCoordinate worldCoordinateToCompareTo) { 

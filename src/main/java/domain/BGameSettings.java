@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:40:27
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-12 04:11:37
+ * @Last Modified time: 2021-04-30 08:52:28
  */
 package domain;
 
@@ -31,7 +31,7 @@ public class BGameSettings {
     private BGameSettings() {
         if ((upgradeConfigMap = openUpgradeConfigMap(saveName)) == null) {
             loadDefaultConfiguration();
-            saveToJsonFile(saveName, upgradeConfigMap);
+            saveToJsonFile(saveName, upgradeConfigMap); 
         }
     }
 
@@ -466,6 +466,17 @@ public class BGameSettings {
 
     private String getUpgradeBuildingRequirementsConfigMapString() {
         return upgradeBuildingRequirementsConfigMapString;
+    }
+    private static String DEFAULT_JWT_Key="WcxjdMsZ9kbjnjUeNinzMm8F";
+    private static int DEFAULT_JWT_KEY_TTL=600000;//10 min
+    public static String getJWTKey() {
+        //TODO get DEFAULT_JWT_Key from a config file
+        return DEFAULT_JWT_Key;
+    }
+
+    public static int getJWTKeyTTL() {
+        //TODO get DEFAULT_JWT_KEY_TTL from a config file
+        return DEFAULT_JWT_KEY_TTL;
     }
 
 }

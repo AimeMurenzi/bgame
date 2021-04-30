@@ -11,6 +11,7 @@ package business;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 
+import business.resources.WorldController;
 import jakarta.ws.rs.core.Application;
 
 public class WorldControllerTest extends JerseyTest {

@@ -1,10 +1,10 @@
 /**
  * @Author: Aimé
- * @Date:   2021-04-12 12:05:54
+ * @Date:   2021-04-29 00:35:02
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-13 12:43:36
+ * @Last Modified time: 2021-04-30 08:52:13
  */
-package domain;
+package domain.world;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,17 +12,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.ext.Provider;
-
 import domain.buildings.Capital;
-import domain.players.Player2;
-import domain.world.CoordinateType;
-import domain.world.World;
-import domain.world.WorldCoordinate;
+import domain.players.Player;
 
-@Provider
-public class WorldMap implements IWorldMap {
-    /* #region Default World*/
+public class WorldMap {
+    private static class HoldInstance {
+        private static final WorldMap INSTANCE = new WorldMap();
+    }
+
+    public static WorldMap getInstance() { 
+        return HoldInstance.INSTANCE;
+    }
+
+    /* #region Default World */
     private String world1 = "0,0,0\n" + "5,0,0\n" + "8,0,0\n" + "10,0,0\n" + "15,0,0\n" + "19,0,0\n" + "3,1,0\n"
             + "7,1,0\n" + "15,1,0\n" + "3,2,0\n" + "7,2,0\n" + "4,3,0\n" + "17,4,0\n" + "18,4,0\n" + "0,5,0\n"
             + "5,5,0\n" + "7,5,0\n" + "9,5,0\n" + "10,5,0\n" + "12,5,0\n" + "15,5,0\n" + "17,5,0\n" + "9,6,0\n"
@@ -75,45 +77,9 @@ public class WorldMap implements IWorldMap {
             + "9,18,5\n" + "15,18,5\n" + "17,18,5\n" + "18,18,5\n" + "19,18,5\n" + "4,19,5\n" + "6,19,5\n" + "8,19,5\n"
             + "12,19,5\n" + "13,19,5\n" + "16,19,5\n" + "17,19,5\n" + "18,19,5\n";
     /* #endregion */
-
-    private Map<WorldCoordinate, WorldCoordinate> coordinatesMap = new HashMap<>();
-    private List<WorldCoordinate> coordinates = loadMap("world1.txt");
-
-    // why map => it has both contains and get speed. at the cost of memory but we
-    // value speed more that memory
-    // why not set(hashset)? need convenience of searching using get instead of a for loop
-    private List<WorldCoordinate> loadMap(String mapName) {
-        List<WorldCoordinate> coordinates = new ArrayList<>();
-        String[] worldCoordSplit = world1.split("\n");
-        for (String string : worldCoordSplit) {
-            String[] line = string.split(",");
-            if (line.length == 3) {
-                // WorldCoordinate worldCoordinate = new WorldCoordinate(Integer.parseInt(line[0]),
-                //         Integer.parseInt(line[1]), getTypeInStringForm(line[2]));
-                // coordinates.add(worldCoordinate);
-                // coordinatesMap.put(worldCoordinate, worldCoordinate);
-            }
-
-        }
-        Collections.sort(coordinates, new ComperatorCoordinates());
-
-        // try (BufferedReader bufferedReader = new BufferedReader(
-        // new FileReader(new
-        // File(getClass().getClassLoader().getResource(mapName).toString())))) {
-        // String st;
-        // while ((st = bufferedReader.readLine()) != null) {
-        // String [] line=st.split(",");
-        // coordinates.add(new WorldCoordinate( Integer.parseInt(line[0]),
-        // Integer.parseInt(line[1]), Integer.parseInt(line[2])));
-        // System.out.println(st);
-        // }
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-
-        return coordinates;
-    }
-
+    private WorldMap(){
+        loadMap(world1, coordinates, coordinatesMap);
+    } 
     private CoordinateType getTypeInStringForm(String type) {
         switch (type) {
         case "0":
@@ -121,65 +87,53 @@ public class WorldMap implements IWorldMap {
         case "1":
             return CoordinateType.WATER;
         case "2":
-            return CoordinateType.FOREST;
-        case "3":
-            return CoordinateType.UNKNOWN;
+            return CoordinateType.FOREST; 
         default:
             return CoordinateType.UNKNOWN;
         }
     }
-
-    @Override
-    public List<WorldCoordinate> getCoordinates() {
-        return new ArrayList<>(coordinates);
-    }
-
-    @Override
-    public WorldCoordinate get(WorldCoordinate land) {
-        WorldCoordinate coordinate = coordinatesMap.get(land);
-        if (coordinate != null) {
-            // return new WorldCoordinate(coordinate.getX(), coordinate.getY(), coordinate.getCoordinateType());
-        }
-        return null;
-    }
-
-    @Override
-    public boolean setOwner(IPlayer player, WorldCoordinate coordinate) {
-        WorldCoordinate worldCoordinate = coordinatesMap.get(coordinate);
-        if (worldCoordinate != null) {
-            if (worldCoordinate.getPlayer() == null) {
-                worldCoordinate.setPlayer(player);
-                return true;
+    private final Map<WorldCoordinate, WorldCoordinate> coordinatesMap = new HashMap<>();
+    private final List<WorldCoordinate> coordinates = new ArrayList<>();
+    private List<WorldCoordinate> loadMap(String mapName,List<WorldCoordinate> coordinates,Map<WorldCoordinate, WorldCoordinate> coordinatesMap) {
+        coordinates.clear();
+        coordinatesMap.clear();
+        String[] worldCoordinateSplit = world1.split("\n");
+        for (String string : worldCoordinateSplit) {
+            String[] line = string.split(",");
+            if (line.length == 3) {
+                WorldCoordinate worldCoordinate =
+                new WorldCoordinate.Builder()
+                .x(Integer.parseInt(line[0]))
+                .y(Integer.parseInt(line[1]))
+                .coordinateType(getTypeInStringForm(line[2]))
+                .build(); 
+                coordinates.add(worldCoordinate);
+                coordinatesMap.put(worldCoordinate, worldCoordinate);
             }
+
         }
+        Collections.sort(coordinates, new CoordinateSortingRule()); 
+        return coordinates;
+    }
+    public static List<WorldCoordinate> getCoordinates() {
+        return new ArrayList<>(getInstance().coordinates);
+    }
+    public static void claimLand(Player player, WorldCoordinate land) { 
+        // when capital is null then coordinate is free
+        // this defaultCoordinate is for case where land to claim does not exist
+        // prevents passing the isFree check point
+       WorldCoordinate defaultCoordinate=new WorldCoordinate.Builder()
+       .capital(new Capital())
+       .build();
+       WorldCoordinate worldCoordinate =getInstance().coordinatesMap.getOrDefault(land,defaultCoordinate);
+       if (worldCoordinate.isFree()) {
+           Capital newCapital=new Capital(player.getId(),String.format("Capital[%d,%d]", worldCoordinate.getX(),worldCoordinate.getY())); 
+           worldCoordinate.setCapital(newCapital);
+           World.addBuilding(newCapital);   
+       }  
+    }
+    public boolean abandonLand(WorldCoordinate coordinate) {
+       
         return false;
     }
- @Override
- public WorldCoordinate claimLand(Player2 player, WorldCoordinate land) { 
-    WorldCoordinate defaultCoordinate=new WorldCoordinate.Builder()
-    .capital(new Capital())//when capital is null then coordinate is free
-    .build();
-    WorldCoordinate worldCoordinate = coordinatesMap.getOrDefault(land,defaultCoordinate);
-    if (worldCoordinate.isFree()) {
-        Capital newCapital=new Capital(player.getId(),String.format("Capital[%d,%d]", worldCoordinate.getX(),worldCoordinate.getY()));        
-        if(World.add(newCapital)){
-            player.addCapital(newCapital);
-        }else{
-            claimLand(player, land);
-        } 
-    } 
-     return null;
- }
-    @Override
-    public boolean removeOwner(IPlayer player, WorldCoordinate coordinate) {
-        WorldCoordinate worldCoordinate = coordinatesMap.get(coordinate);
-        if (worldCoordinate != null) {
-            if (worldCoordinate.getPlayer().equals(player)) {
-                worldCoordinate.setPlayer(null);
-                return true;
-            }
-        }
-        return false;
-    }
-
 }

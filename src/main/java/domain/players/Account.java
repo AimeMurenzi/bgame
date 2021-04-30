@@ -1,8 +1,12 @@
+/**
+ * @Author: Aimé
+ * @Date:   2021-04-24 11:38:30
+ * @Last Modified by:   Aimé
+ * @Last Modified time: 2021-04-30 08:49:56
+ */
 package domain.players;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -20,7 +24,7 @@ import domain.Util;
 public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private long id;
+    private long id; 
     @NotBlank
     private String password;
 
@@ -47,16 +51,7 @@ public class Account implements Serializable {
         }
         Util.throwBadRequest("password is blank");
     }
-private static Set<Long> idSet=new HashSet<>();
-private String idsFileNameString = Util.generateLocation("accountsIDPool.ser");
-public static long generateID(){
-    long id=Util.generateID();
-    while (idSet.contains(id)) {
-        id=Util.generateID();
-    }
-    idSet.add(id);
-    return id;
-}
+
     public static class Builder {
         private long id;
         @NotNull

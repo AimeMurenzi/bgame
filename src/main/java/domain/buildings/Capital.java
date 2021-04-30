@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:10:23
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-12 04:12:03
+ * @Last Modified time: 2021-04-30 08:48:55
  */
 package domain.buildings;
 
@@ -16,6 +16,7 @@ import javax.ws.rs.ext.Provider;
 
 import domain.BGameSettings;
 import domain.ResourceType;
+import domain.Util;
 
 @Provider
 @Singleton
@@ -26,7 +27,16 @@ public class Capital extends Building implements ICapital {
 
     private final Map<ResourceType, Integer> storedResources = new HashMap<>();
     private final Map<ResourceType, List<Building>> capitalBuildings = new HashMap<>();
+    private final Map<Long, Building> capitalBuildingRecord = new HashMap<>();
     private String capitalName;
+
+    private long generateBuildingID() {
+        long id = Util.generateID();
+        while (capitalBuildingRecord.containsKey(id)) {
+            id = Util.generateID();
+        }
+        return id;
+    }
 
     private void initCapital() {
         storedResources.put(ResourceType.BUILDMAT1, 2000);
@@ -43,9 +53,9 @@ public class Capital extends Building implements ICapital {
         initCapital();
     }
 
-    public Capital(long parentId,String name) {
-        super(parentId); 
-        this.capitalName=name;
+    public Capital(long parentId, String name) {
+        super(parentId);
+        this.capitalName = name;
         initCapital();
     }
 
@@ -171,19 +181,18 @@ public class Capital extends Building implements ICapital {
             }
             upgradeable.setLevel(upgradeable.getLevel() + 1);
         }
-
         return allMissingResources;
     }
 
-   public String getCapitalName() {
-    return capitalName;
-}
+    public String getCapitalName() {
+        return capitalName;
+    }
 
-public void setCapitalName(String capitalName) {
-    this.capitalName = capitalName;
-}
+    public void setCapitalName(String capitalName) {
+        this.capitalName = capitalName;
+    }
 
- public Map<ResourceType, Integer> getStoredResources() {
+    public Map<ResourceType, Integer> getStoredResources() {
         return storedResources;
     }
 
@@ -235,12 +244,17 @@ public void setCapitalName(String capitalName) {
 
     @Override
     public Map<String, Map<ResourceType, Integer>> build(Building building) {
-
+        if (building.getResourceType().equals(ResourceType.CAPITAL)) {
+            Util.throwBadRequest("Capital Can Not Build Capital");
+        }
         Map<String, Map<ResourceType, Integer>> missingResourcesMap = upgrade(building);
         if (missingResourcesMap.size() == 0) {
+            building.setId(generateBuildingID());
+            building.setParentId(this.getId());
             ResourceType resourceType = building.getResourceType();
             List<Building> buildingsOfResourceType = capitalBuildings.getOrDefault(resourceType, new ArrayList<>());
             buildingsOfResourceType.add(building);
+            capitalBuildingRecord.put(building.getId(), building);
             capitalBuildings.put(resourceType, buildingsOfResourceType);
         }
 
