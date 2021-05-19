@@ -10,4 +10,8 @@ You found a city
 Produce resources you need to make game units  
 Attack and take over other cities 
 
-The basics, nothing too crazy 
+The basics  
+  
+Current State
+![current state screenshots](bgame.png "current state screenshots") 
+
