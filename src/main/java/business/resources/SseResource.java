@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-06-13 13:30:10
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-07-21 20:07:31
+ * @Last Modified time: 2021-10-12 21:18:03
  */
 package business.resources;
 
@@ -20,11 +20,6 @@ import javax.ws.rs.sse.OutboundSseEvent;
 import javax.ws.rs.sse.Sse;
 import javax.ws.rs.sse.SseBroadcaster;
 import javax.ws.rs.sse.SseEventSink;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import business.security.JWTBind;
 
 @Path("sse")
 @Singleton
