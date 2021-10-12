@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-16 05:43:21
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:51:04
+ * @Last Modified time: 2021-07-21 20:50:49
  */
 package domain.players;
 
@@ -19,13 +19,13 @@ public class Player implements Serializable {
     @JsonIgnore
     private int maxLandClaims = 5;
 
-    private long id;
+    private String id;
     @NotBlank 
     private String name;
 
     private Player() {}
 
-    private Player(long id, @NotBlank String name) {
+    private Player(String id, @NotBlank String name) {
         this.id = id;
         setName(name);
     }
@@ -38,11 +38,11 @@ public class Player implements Serializable {
         this.maxLandClaims = maxLandClaims;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -84,11 +84,11 @@ public class Player implements Serializable {
     }
 
     public static class Builder {
-        private long id;
+        private String id;
         @NotBlank
         private String name;
 
-        public Builder id(long id) {
+        public Builder id(String id) {
             this.id = id;
             return this;
         }

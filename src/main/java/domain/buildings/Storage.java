@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:38:53
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:45:36
+ * @Last Modified time: 2021-07-21 20:52:29
  */
 package domain.buildings;
 
@@ -35,7 +35,7 @@ public class Storage extends Building {
 
     }
 
-    public Storage(long parentId) {
+    public Storage(String parentId) {
         super(parentId);
         initUpgradeRequirements();
     }
@@ -52,5 +52,11 @@ public class Storage extends Building {
 
     public Map<Integer, Integer> getStorageLevelMap() {
         return storageLevelMap;
+    }
+
+    @Override
+    public Building copy() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

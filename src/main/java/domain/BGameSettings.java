@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:40:27
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:52:28
+ * @Last Modified time: 2021-07-21 22:46:46
  */
 package domain;
 
@@ -468,7 +468,7 @@ public class BGameSettings {
         return upgradeBuildingRequirementsConfigMapString;
     }
     private static String DEFAULT_JWT_Key="WcxjdMsZ9kbjnjUeNinzMm8F";
-    private static int DEFAULT_JWT_KEY_TTL=600000;//10 min
+    private static int DEFAULT_JWT_KEY_TTL=3600000;//60 min
     public static String getJWTKey() {
         //TODO get DEFAULT_JWT_Key from a config file
         return DEFAULT_JWT_Key;

@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-12 05:09:32
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:53:19
+ * @Last Modified time: 2021-07-21 20:47:42
  */
 package domain; 
 
@@ -38,7 +38,7 @@ public class Util {
 
     /**
      *
-     * @return String of 11 random you tube like characters using base 36 without
+     * @return String of 19 random you tube like characters using base 36 without
      *         capital letters
      */
     public static String generateYouTubeStyleNameID() {
@@ -54,7 +54,7 @@ public class Util {
         String base = "0123456789abcdefghijklmnopqrstuvwxyz";
         StringBuilder finalString2 = new StringBuilder();
         int min = 0, max = 36;
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 19; i++) {
             int random = (int) ((Math.random() * (max - min)) + min);
             finalString2.append(base.charAt(random));
         }

@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:37:36
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:47:15
+ * @Last Modified time: 2021-07-21 20:40:07
  */
 package domain.buildings;
 
@@ -11,8 +11,8 @@ import java.util.Map;
 import domain.ResourceType;
 
 public abstract class Building implements IUpgradeable {
-    private long id;
-    private long parentId;
+    private String id;
+    private String parentId;
     private int level = 1;
     private Map<Integer, Map<ResourceType, Integer>> upgradeResourceRequirementsMap;
 
@@ -20,7 +20,7 @@ public abstract class Building implements IUpgradeable {
                                                                                                                                    * requiredBuildingLevel
                                                                                                                                    */Integer>>> upgradeBuildingRequirementsMap;
 
-    public Building(long parentId) {
+    public Building(String parentId) {
         this.parentId = parentId;
     }
 
@@ -28,7 +28,7 @@ public abstract class Building implements IUpgradeable {
         this.parentId = parentCapital.getId();
     }
 
-    public Building(long parentId, long id) {
+    public Building(String parentId, String id) {
         this.parentId = parentId;
         this.id = id;
     }
@@ -54,19 +54,19 @@ public abstract class Building implements IUpgradeable {
         return upgradeBuildingRequirementsMap;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public long getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(long parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 
@@ -74,4 +74,32 @@ public abstract class Building implements IUpgradeable {
             Map<Integer, Map<ResourceType, Map<ResourceType, Integer>>> upgradeBuildingRequirementsMap) {
         this.upgradeBuildingRequirementsMap = upgradeBuildingRequirementsMap;
     }
+
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Building other = (Building) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
+    public abstract Building copy();
 }

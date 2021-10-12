@@ -7,6 +7,8 @@
 package business.resources;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -31,12 +33,43 @@ import domain.world.WorldMap;
 @JWTBind
 public class WorldController extends Application {
     @Inject
-    private DecodedJWT decodedJWT;
+    private DecodedJWT decodedJWT; 
+    @Inject
+    private ISseResource sseResource;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<WorldCoordinate> worldMap() {
-        return WorldMap.getCoordinates();
+    public List<LinkedHashMap<String, Object>> worldMap() {
+        List<LinkedHashMap<String, Object>> worldCoordinates = getWorldState(); 
+        return worldCoordinates;
+    }
+
+    private List<LinkedHashMap<String, Object>> getWorldState() {
+        List<LinkedHashMap<String, Object>> worldCoordinates = new LinkedList<>();
+        for (WorldCoordinate coordinate : WorldMap.getCoordinates()) {
+            worldCoordinates.add(getRedactedCoordinate(coordinate)); 
+        }
+        return worldCoordinates;
+    }
+
+    private LinkedHashMap<String, Object> getRedactedCoordinate(WorldCoordinate coordinate) {
+        return new LinkedHashMap<String, Object>() {
+            {
+                put("x", coordinate.getX());
+                put("y", coordinate.getY());
+                put("coordinateType", coordinate.getCoordinateType());
+                put("free",coordinate.isFree());
+                if (coordinate.getCapital() != null) {
+                    put("capital", new LinkedHashMap<String, Object>() {
+                        {
+                            put("id", coordinate.getCapital().getId());
+                            put("capitalName", coordinate.getCapital().getCapitalName());
+                            put("level", coordinate.getCapital().getLevel());
+                        }
+                    });
+                }
+            }
+        };
     }
 
     @GET
@@ -48,11 +81,21 @@ public class WorldController extends Application {
 
     @GET
     @Path("claim/{xCoordinate}/{yCoordinate}")
-    public void claimLand(@PathParam("xCoordinate") int xCoordinate, @PathParam("yCoordinate") int yCoordinate) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public LinkedHashMap<String, Object> claimLand(@PathParam("xCoordinate") int xCoordinate, @PathParam("yCoordinate") int yCoordinate) {
+        System.err.println(xCoordinate);
         Player player = World.getPlayers()
                 .get(new Player.Builder().name(decodedJWT.getClaim("name").asString()).build());
-        if (player != null) {
-            WorldMap.claimLand(player, new WorldCoordinate.Builder().x(xCoordinate).y(yCoordinate).build());
+                WorldCoordinate coordinate= WorldMap.getCoordinatesMap().get(new WorldCoordinate.Builder().x(xCoordinate).y(yCoordinate).build());
+        if (player != null && coordinate!=null) {
+            WorldMap.claimLand(player, coordinate);
+            coordinate=WorldMap.getCoordinatesMap().get(coordinate);
+            sseResource.broadcastEvent(getWorldState(), "world-state");
+            System.out.println(coordinate.getCapital().getCapitalName());
+        return getRedactedCoordinate(coordinate); 
         }
-    }
+        return null;
+       
+    } 
+    
 }

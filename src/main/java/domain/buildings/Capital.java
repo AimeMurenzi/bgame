@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:10:23
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:48:55
+ * @Last Modified time: 2021-07-21 22:17:03
  */
 package domain.buildings;
 
@@ -17,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 import domain.BGameSettings;
 import domain.ResourceType;
 import domain.Util;
+import domain.players.Player;
 
 @Provider
 @Singleton
@@ -27,13 +28,32 @@ public class Capital extends Building implements ICapital {
 
     private final Map<ResourceType, Integer> storedResources = new HashMap<>();
     private final Map<ResourceType, List<Building>> capitalBuildings = new HashMap<>();
-    private final Map<Long, Building> capitalBuildingRecord = new HashMap<>();
+    private final Map<String, Building> capitalBuildingRecord = new HashMap<>();
     private String capitalName;
+    private int maxStorageCapacity = 2000;
 
-    private long generateBuildingID() {
-        long id = Util.generateID();
+    @Override
+    public Building copy() {
+        Capital capital = new Capital();
+        capital.setParentId(this.getParentId());
+        capital.setId(this.getId());
+        capital.setLevel(this.getLevel());
+
+        capital.capitalName = new String(this.capitalName);
+        capital.storedResources.clear();
+        capital.capitalBuildings.clear();
+        capital.capitalBuildingRecord.clear();
+        capital.storedResources.putAll(storedResources);
+        capital.capitalBuildings.putAll(capitalBuildings);
+        capital.capitalBuildingRecord.putAll(capitalBuildingRecord);
+
+        return capital;
+    }
+
+    private String generateBuildingID() {
+        String id = Util.generateYouTubeStyleNameID();
         while (capitalBuildingRecord.containsKey(id)) {
-            id = Util.generateID();
+            id = Util.generateYouTubeStyleNameID();
         }
         return id;
     }
@@ -49,11 +69,11 @@ public class Capital extends Building implements ICapital {
     // keeping recalculated capital storage size(to save on processing power and
     // reducing call delay).
     public Capital() {
-        super(0);
+        super("0");
         initCapital();
     }
 
-    public Capital(long parentId, String name) {
+    public Capital(String parentId, String name) {
         super(parentId);
         this.capitalName = name;
         initCapital();
@@ -196,6 +216,14 @@ public class Capital extends Building implements ICapital {
         return storedResources;
     }
 
+    public int getMaxStorageCapacity() {
+        return maxStorageCapacity;
+    }
+
+    public void setMaxStorageCapacity(int maxStorageCapacity) {
+        this.maxStorageCapacity = maxStorageCapacity;
+    }
+
     public Map<ResourceType, List<Building>> getCapitalBuildings() {
         return capitalBuildings;
     }
@@ -210,43 +238,51 @@ public class Capital extends Building implements ICapital {
     }
 
     public void refresh() {
-        List<Building> productionBuildings = capitalBuildings.get(ResourceType.MATPRODUCER);
-        List<Building> storageBuildings = capitalBuildings.get(ResourceType.STORAGE);
-        int maximumStorageCapacity = 2000;
-        if (storageBuildings != null)
-            for (Building building : storageBuildings) {
-                Storage storage = (Storage) building;
-                maximumStorageCapacity += storage.getStorageLevelMap().getOrDefault(storage.getLevel(), 0);
-            }
-        if (productionBuildings != null)
-            for (Building building : productionBuildings) {
-                BuildMaterialProducer buildMaterial = (BuildMaterialProducer) building;
-                ResourceType resourceTypeProduced = buildMaterial.getResourceTypeProduced();
-                int currentlyStored = storedResources.getOrDefault(resourceTypeProduced, 0);
-                currentlyStored += buildMaterial.unload();
-                currentlyStored = currentlyStored > maximumStorageCapacity ? maximumStorageCapacity : currentlyStored;
-                storedResources.put(buildMaterial.getResourceTypeProduced(), currentlyStored);
-            }
+
+        refreshMaxStorage();
+        refreshProduction();
     }
 
+    @Override
     public Map<String, Object> getInfo() {
+        return getInfo(null);
+    }
+
+    /**
+     * get inf about Capital
+     * 
+     * @param player
+     * @return limited capital information depending on whether the player is owner
+     *         of this capital
+     */
+    public Map<String, Object> getInfo(final Player player) {
         refresh();
-        return new HashMap<String, Object>() {
+        Map<String, Object> ownerInfo = new HashMap<String, Object>() {
             private static final long serialVersionUID = 1L;
             {
+                put("id", getId());
+                put("capitalName", getCapitalName());
                 put("level", getLevel());
                 put("storedResources", storedResources);
                 put("buildings", capitalBuildings);
             }
         };
-
+        if (player != null && this.getParentId().equals(player.getId())) {
+            return ownerInfo;
+        } else {
+            return new HashMap<String, Object>() {
+                {
+                    put("id", getId());
+                    put("capitalName", getCapitalName());
+                    put("level", getLevel());
+                }
+            };
+        }
     }
 
     @Override
     public Map<String, Map<ResourceType, Integer>> build(Building building) {
-        if (building.getResourceType().equals(ResourceType.CAPITAL)) {
-            Util.throwBadRequest("Capital Can Not Build Capital");
-        }
+        capitalOffLimitCheck(building);
         Map<String, Map<ResourceType, Integer>> missingResourcesMap = upgrade(building);
         if (missingResourcesMap.size() == 0) {
             building.setId(generateBuildingID());
@@ -259,6 +295,51 @@ public class Capital extends Building implements ICapital {
         }
 
         return missingResourcesMap;
+    }
+
+    private void capitalOffLimitCheck(Building building) {
+        if (building.getResourceType().equals(ResourceType.CAPITAL)) {
+            Util.throwBadRequest("Capital Can Not Build Capital");
+        }
+    }
+    public void demolish(Building building) {
+        capitalOffLimitCheck(building);
+        Map<ResourceType, Integer> resourcesForLevel=building.getUpgradeResourceRequirementsMap().get(1);
+                   for(Map.Entry<ResourceType, Integer> resource:resourcesForLevel.entrySet())
+                   addResource(resource.getKey(),resource.getValue());
+
+    }
+    public void addResource(Map<ResourceType, Integer> resource) {
+        for (Map.Entry<ResourceType, Integer> entry : resource.entrySet()) {
+            addResource(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void addResource(ResourceType key, Integer value) {
+        int currentlyStored = storedResources.getOrDefault(key, 0);
+        currentlyStored += value;
+        currentlyStored = currentlyStored > getMaxStorageCapacity() ? getMaxStorageCapacity() : currentlyStored;
+        storedResources.put(key, currentlyStored);
+    }
+
+    private void refreshProduction() {
+        List<Building> productionBuildings = capitalBuildings.get(ResourceType.MATPRODUCER);
+        if (productionBuildings != null)
+            for (Building building : productionBuildings) {
+                BuildMaterialProducer buildMaterial = (BuildMaterialProducer) building;
+                addResource(buildMaterial.getResourceTypeProduced(), buildMaterial.unload());
+            }
+    }
+
+    private void refreshMaxStorage() {
+        List<Building> storageBuildings = capitalBuildings.get(ResourceType.STORAGE);
+        int maxStorageCapacity = 2000;
+        if (storageBuildings != null)
+            for (Building building : storageBuildings) {
+                Storage storage = (Storage) building;
+                maxStorageCapacity += storage.getStorageLevelMap().getOrDefault(storage.getLevel(), 0);
+            }
+        setMaxStorageCapacity(maxStorageCapacity);
     }
 
 }

@@ -2,17 +2,21 @@
  * @Author: Aimé
  * @Date:   2021-04-11 03:50:17
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:51:46
+ * @Last Modified time: 2021-07-21 20:56:40
  */
 package domain.world;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.ext.Provider;
 
+import domain.ResourceType;
 import domain.Util;
 import domain.buildings.Building;
+import domain.buildings.Capital;
 import domain.players.Player;
 
 @Provider
@@ -26,11 +30,16 @@ public class World {
     }
 
     // TODO to be replaced by database
-    private final Map<Long, Building> worldBuildings = new HashMap<>();
-    private final Map<Player, Player> players = new HashMap<>();// why? speed
+    private Map<String, Building> worldBuildings;
+    private Map<Player, Player> players;// why? speed
 
-    public static  Map<Long, Building> getWorldBuildings() { 
-        return getInstance().worldBuildings;
+    private World() {
+        this.worldBuildings = new HashMap<>();
+        this.players = new HashMap<>();
+    }
+
+    public static Map<String, Building> getWorldBuildings() {
+        return new HashMap<>(getInstance().worldBuildings);
     }
 
     public static Map<Player, Player> getPlayers() {
@@ -42,10 +51,10 @@ public class World {
      * 
      * @return generated building id
      */
-    private long generateBuildingID() {
-        long id = Util.generateID();
-        while (worldBuildings.containsKey(id)) {
-            id = Util.generateID();
+    private String generateBuildingID() {
+        String id = Util.generateYouTubeStyleNameID();
+        while (worldBuildings.containsKey(String.valueOf(id))) {
+            id = Util.generateYouTubeStyleNameID();
         }
         return id;
     }
@@ -57,9 +66,9 @@ public class World {
      * @param building
      */
     public static void updateBuilding(Building building) {
-        final Map<Long, Building> worldBuildings = getInstance().worldBuildings;
+        final Map<String, Building> worldBuildings = getInstance().worldBuildings;
         building.setId(getInstance().generateBuildingID());
-        worldBuildings.put(building.getId(), building);
+        worldBuildings.put(String.valueOf(building.getId()), building);
     }
 
     /**
@@ -69,9 +78,22 @@ public class World {
      * @param building
      */
     public static void addBuilding(Building building) {
-        final Map<Long, Building> worldBuildings = getInstance().worldBuildings;
         building.setId(getInstance().generateBuildingID());
-        worldBuildings.put(building.getId(), building);
+        String id = String.valueOf(building.getId());
+        Map<String, Building> worldBuildings = getInstance().worldBuildings;
+        worldBuildings.put(id, building.copy());
+        // worldBuildings.put(id, building);
+        // worldBuildings.put(id, building);
+        // worldBuildings.put(id, building);
+        // worldBuildings.put(id, building);
+        Building building2 = worldBuildings.get(id);
+        if (building.equals(building2)) {
+            System.out.println("EQUALS");
+        } else {
+            System.out.println("NOT EQUALS");
+        }
+        assertEquals(building, building2);
+        return;
     }
 
     public static void addPlayer(Player player) {
@@ -80,5 +102,45 @@ public class World {
             Util.throwBadRequest("Player name already taken");
         }
         players.put(player, player);
+    }
+
+    public static Map<String, Map<ResourceType, Integer>> build(String capitalId, Building building, Player player) {
+        Player playerLocal = getPlayers().get(player);
+        if (playerLocal != null) {
+            final Map<String, Building> worldBuildings = World.getWorldBuildings();
+            Building playersCapital = worldBuildings.get(capitalId);
+            if (playersCapital != null && playersCapital instanceof Capital
+                    && playersCapital.getParentId().equals(playerLocal.getId())) {
+                Capital capital = (Capital) playersCapital;
+                return capital.build(building);// returns missing resource if there are any
+            }
+            Util.throwBadRequest("Capital Does Not Belong To Player");
+            // get player capital
+            // check if player has path param capital
+            // build building in capital
+        }
+        Util.throwBadRequest("Player Does Not Exist");
+        return null;
+    }
+
+    private void demolish(String buildingId, Player player) {
+        Player playerLocal = getPlayers().get(player);
+        if (playerLocal != null) {
+            final Map<String, Building> worldBuildings = World.getWorldBuildings();
+            Building building = worldBuildings.get(buildingId);
+            if (building != null && !(building instanceof Capital)) {
+                Capital capital = (Capital) worldBuildings.get(building.getParentId());
+                if (capital.getParentId().equals(player.getId())) {
+                    capital.demolish(building); 
+                }
+            } else if (building != null && (building instanceof Capital)
+                    && building.getParentId() == playerLocal.getId()) {
+                worldBuildings.remove(buildingId);
+            }
+            Util.throwBadRequest("Capital Does Not Belong To Player");
+            // get player capital
+            // check if player has path param capital
+            // build building in capital
+        }
     }
 }

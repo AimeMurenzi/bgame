@@ -8,7 +8,7 @@
 import React, { useState } from "react";
 import { Route } from "react-router";
 import { isLoginValid, setToken } from "./session-manager";
-import { addClasses, formatText, GET } from "./utils";
+import { addClasses, formatText, POST, request } from "./utils";
 function Login({ component: Component, ...rest }) {
     const [error, setError] = useState(null);
     const username = InputChangeListener("");
@@ -18,15 +18,8 @@ function Login({ component: Component, ...rest }) {
             name:username,
             password:password 
         };
-        let apiPath = "/api/users/create/account";
-        let options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body:JSON.stringify(account)
-        }; 
-        GET(apiPath, options)
+        let apiPath = "/api/users/create/account"; 
+        POST(apiPath, JSON.stringify(account))
             .then(([responseOK, body]) => {
                 if (responseOK) {
                     rest.history.push("/login");
@@ -44,9 +37,8 @@ function Login({ component: Component, ...rest }) {
                 "Accept": "text/plain",
                 "Authorization": "Basic " + usernamePasswordBase64
             }
-        };
-
-        GET(apiPath, options)
+        }; 
+        request (apiPath,options)
             .then(([responseOK, body, responseHeaderEntries]) => {
                 if (responseOK) {
                     setToken(body);

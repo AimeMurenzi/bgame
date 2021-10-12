@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-24 11:38:30
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:49:56
+ * @Last Modified time: 2021-07-21 20:55:07
  */
 package domain.players;
 
@@ -24,18 +24,18 @@ import domain.Util;
 public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private long id; 
+    private String id; 
     @NotBlank
     private String password;
 
     private Account() {
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -53,12 +53,12 @@ public class Account implements Serializable {
     }
 
     public static class Builder {
-        private long id;
+        private String id;
         @NotNull
         @NotEmpty
         private String password;
 
-        public Builder id(long id) {
+        public Builder id(String id) {
             this.id = id;
             return this;
         }

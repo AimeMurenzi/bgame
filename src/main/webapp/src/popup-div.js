@@ -6,19 +6,20 @@
  */
 
 import React from "react";
+import { Link } from "react-router-dom";
 import { getToken, isLoginValid } from "./session-manager";
-import { addClasses, formatText,GET } from "./utils";
+import { addClasses, formatText, GET } from "./utils";
 function Popup({ coordinate, popupState, togglePopup, ...rest }) {
 
     const claimLand = (land) => {
         if (isLoginValid()) {
-            let apiPath = formatText("/api/world/claim/{0}/{1}",land.x,land.y);
+            let apiPath = formatText("/api/world/claim/{0}/{1}", land.x, land.y);
             let options = {
                 method: "GET",
                 headers: {
                     "Authorization": "Bearer " + getToken()
                 }
-            }; 
+            };
             GET(apiPath, options)
                 .then(([responseOK, body]) => {
                     if (responseOK) {
@@ -34,7 +35,13 @@ function Popup({ coordinate, popupState, togglePopup, ...rest }) {
             if (!!coordinate.free && coordinate.coordinateType === "LAND") {
                 return <button className="button" onClick={() => claimLand(coordinate)}>claim land</button>
             } else {
-                return <li>{coordinate.capital.capitalName}</li>
+                return (
+                    <div>
+                        <li>{coordinate.capital.capitalName}</li>
+                        <Link className="button" to={{ pathname:"capital", state: { coordinate: coordinate } }} >Visit</Link>
+                    </div>
+
+                )
             }
         }
     }

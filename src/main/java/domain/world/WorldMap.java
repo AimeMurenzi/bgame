@@ -132,6 +132,9 @@ public class WorldMap {
            World.addBuilding(newCapital);   
        }  
     }
+    public static Map<WorldCoordinate, WorldCoordinate> getCoordinatesMap() {
+        return new HashMap<>(getInstance().coordinatesMap) ;
+    }
     public boolean abandonLand(WorldCoordinate coordinate) {
        
         return false;

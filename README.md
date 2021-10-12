@@ -14,4 +14,5 @@ The basics
   
 Current State
 ![current state screenshots](bgame.png "current state screenshots") 
+![current state screenshots](building.png "current state screenshots") 
 

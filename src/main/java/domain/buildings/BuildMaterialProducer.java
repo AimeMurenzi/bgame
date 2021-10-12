@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-07 04:17:30
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-29 19:57:32
+ * @Last Modified time: 2021-07-21 20:49:38
  */
 package domain.buildings;
 
@@ -15,7 +15,7 @@ public class BuildMaterialProducer extends Building {
     private final int PRODUCTIONPERSECOND = 15;
     private final ResourceType resourceTypeProduced;
 
-    public BuildMaterialProducer(long parentId, ResourceType resourceTypeProduced) {
+    public BuildMaterialProducer(String parentId, ResourceType resourceTypeProduced) {
         super(parentId);
         lastUpdate = System.currentTimeMillis();
         this.resourceTypeProduced = resourceTypeProduced;
@@ -61,6 +61,11 @@ public class BuildMaterialProducer extends Building {
 
     public ResourceType getResourceTypeProduced() {
         return resourceTypeProduced;
+    }
+
+    @Override
+    public Building copy() { 
+        return null;
     }
 
 }

@@ -2,7 +2,7 @@
  * @Author: Aimé
  * @Date:   2021-04-24 11:37:06
  * @Last Modified by:   Aimé
- * @Last Modified time: 2021-04-30 08:50:24
+ * @Last Modified time: 2021-07-21 20:56:00
  */
 package domain.players;
 
@@ -30,7 +30,7 @@ public class AccountManager  implements Serializable{
     private static final long serialVersionUID = 1L;
     private String ACCOUNTS_SERIAL_NAME_STRING = Util.generateLocation("accounts.ser");
 
-    private Map<Long, Account> accountIDs = new HashMap<>();
+    private Map<String, Account> accountIDs = new HashMap<>();
    
 
     private AccountManager() {
@@ -94,10 +94,10 @@ public class AccountManager  implements Serializable{
      * generates a guaranteed non existing account id
      * @return generated account id
      */
-    public  long generateAccountID(){ 
-        long id=Util.generateID();
+    public  String generateAccountID(){ 
+        String id=Util.generateYouTubeStyleNameID();
         while (accountIDs.containsKey(id)) {
-            id=Util.generateID();
+            id=Util.generateYouTubeStyleNameID();
         }  
         return id;
     }
@@ -109,7 +109,7 @@ public class AccountManager  implements Serializable{
             ex.printStackTrace();
         }
     }
-    public static Map<Long, Account> getAccountIDs() {
+    public static Map<String, Account> getAccountIDs() {
         return new HashMap<>(getInstance().accountIDs);
     }
     private static class HoldInstance {

@@ -11,8 +11,9 @@ import { isLoginValid } from "./session-manager";
 function DefaultRoute({component:Component, ...rest}) { 
     return (
         <Route {...rest} render={
-            (props)=>isLoginValid()?
-            <Redirect to={{pathname:"/world"}}/>:<Component {...props}/>
+            // (props)=>isLoginValid()?
+            // <Redirect to={{pathname:"/world"}}/>:<Component {...props}/>
+            (props)=><Component {...props}/>
         } />
     );
 }
